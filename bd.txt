@@ -1,0 +1,40 @@
+CREATE TABLE VEHICULES (
+    Immatriculation VARCHAR(30) PRIMARY KEY,
+    Ref_Modèle VARCHAR(30) NOT NULL,
+    Date_Mise_Circulation DATE NOT NULL,
+    Kilométrage NUMERIC NOT NULL,
+    Puissance VARCHAR(3) DEFAULT '4CH',
+    Prix_Demandé NUMERIC NOT NULL CHECK (Prix_Demandé > 0)
+);
+
+CREATE TABLE MODELES (
+    Ref_Modèle VARCHAR(30) PRIMARY KEY,
+    Modèle VARCHAR(30) NOT NULL,
+    Marque VARCHAR(30) NOT NULL,
+    Puissance VARCHAR(3) NOT NULL CHECK (Puissance IN ('4CH', '5CH', '6CH'))
+);
+
+CREATE TABLE PERSONNES (
+    CIN VARCHAR(15) PRIMARY KEY,
+    Nom VARCHAR(30) NOT NULL CHECK (Nom NOT LIKE '%[^A-Za-z]%'),
+    Prénom VARCHAR(30) NOT NULL,
+    Email VARCHAR(50) NOT NULL UNIQUE CHECK (Email LIKE '%@%.%'),
+    Num_Tél NUMERIC NOT NULL UNIQUE CHECK (Num_Tél NOT LIKE '%[^0-9]%')
+);
+
+CREATE TABLE ACQUISITIONS (
+    Immatriculation VARCHAR(30) PRIMARY KEY,
+    CIN VARCHAR(15) NOT NULL,
+    Date_Début DATE,
+    Date_Fin DATE NOT NULL CHECK (Date_Fin > Date_Début),
+    FOREIGN KEY (Immatriculation) REFERENCES VEHICULES (Immatriculation),
+    FOREIGN KEY (CIN) REFERENCES PERSONNES (CIN)
+);
+
+CREATE TABLE CONTRAT_VENTE (
+   Ref_contrat VARCHAR(30) PRIMARY KEY,
+   CIN VARCHAR(15) REFERENCES PERSONNES(CIN),
+   Immatriculation VARCHAR(30) REFERENCES VEHICULES(Immatriculation),
+   Date_vente DATE DEFAULT CURRENT_DATE,
+   Prix_vente NUMERIC NOT NULL CHECK (Prix_vente > 0),
+);
